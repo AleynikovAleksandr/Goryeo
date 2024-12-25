@@ -100,7 +100,6 @@ public class Scene
     public void AddObject(GraphObject graphObject)
     {
         objects.Add(graphObject);
-       
     }
 
     public void Draw()
@@ -167,6 +166,71 @@ public class BlackWhiteSceneFactory : GraphObjectFactory
     }
 }
 
+public class TestSceneBuilder
+{
+    private GraphObjectFactory factory;
+
+    public TestSceneBuilder(GraphObjectFactory factory)
+    {
+        this.factory = factory;
+    }
+
+    public Scene BuildTestScene()
+    {
+        Scene scene = factory.CreateScene();
+
+        
+        Point point1 = factory.CreatePoint(1, 1);
+        Point point2 = factory.CreatePoint(4, 5);
+        Line line = factory.CreateLine(point1, point2);
+        Circle circle = factory.CreateCircle(point1, 3);
+
+        
+        point1.AddToScene(scene);
+        point2.AddToScene(scene);
+        line.AddToScene(scene);
+        circle.AddToScene(scene);
+
+        return scene;
+    }
+}
+
+
+public class MemorySceneBuilder
+{
+    private GraphObjectFactory factory;
+
+    public MemorySceneBuilder(GraphObjectFactory factory)
+    {
+        this.factory = factory;
+    }
+
+    public void BuildAndCalculateMemory()
+    {
+        
+        Point point1 = factory.CreatePoint(1, 1);
+        Point point2 = factory.CreatePoint(4, 5);
+        Line line = factory.CreateLine(point1, point2);
+        Circle circle = factory.CreateCircle(point1, 3);
+
+        
+        long memoryBefore = GC.GetTotalMemory(true);
+
+        
+        Scene scene = factory.CreateScene();
+        point1.AddToScene(scene);
+        point2.AddToScene(scene);
+        line.AddToScene(scene);
+        circle.AddToScene(scene);
+
+        
+        long memoryAfter = GC.GetTotalMemory(true);
+
+        
+        Console.WriteLine($"Память, занимаемая сценой: {memoryAfter - memoryBefore} байт");
+    }
+}
+
 class Program
 {
     static void Main(string[] args)
@@ -174,27 +238,16 @@ class Program
         GraphObjectFactory colorFactory = new ColorSceneFactory();
         GraphObjectFactory bwFactory = new BlackWhiteSceneFactory();
 
-        Scene colorScene = colorFactory.CreateScene();
-        Scene bwScene = bwFactory.CreateScene();
+        
+        TestSceneBuilder testBuilder = new TestSceneBuilder(colorFactory);
+        Scene colorScene = testBuilder.BuildTestScene();
 
-        Point colorPoint = colorFactory.CreatePoint(2, 3);
-        Line colorLine = colorFactory.CreateLine(colorPoint, colorFactory.CreatePoint(5, 7));
-        Circle colorCircle = colorFactory.CreateCircle(colorPoint, 4);
+       
+        MemorySceneBuilder memoryBuilder = new MemorySceneBuilder(colorFactory);
+        memoryBuilder.BuildAndCalculateMemory();
 
-        colorPoint.AddToScene(colorScene);
-        colorLine.AddToScene(colorScene);
-        colorCircle.AddToScene(colorScene);
-
-        Point bwPoint = bwFactory.CreatePoint(1, 1);
-        Line bwLine = bwFactory.CreateLine(bwPoint, bwFactory.CreatePoint(3, 4));
-        Circle bwCircle = bwFactory.CreateCircle(bwPoint, 2);
-
-        bwPoint.AddToScene(bwScene);
-        bwLine.AddToScene(bwScene);
-        bwCircle.AddToScene(bwScene);
-
+        
         colorScene.Draw();
-        bwScene.Draw();
 
         Console.ReadLine();
     }
