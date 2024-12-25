@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 public abstract class GraphObject : ICloneable
 {
     public abstract void Draw();
     public abstract object Clone();
 
-    public void AddToScene()
+    public void AddToScene(Scene scene)
     {
-        Scene.Instance.AddObject(this);
+        scene.AddObject(this);
     }
 }
 
@@ -24,7 +21,6 @@ public class Point : GraphObject
     {
         this.x = x;
         this.y = y;
-        AddToScene();
     }
 
     public override void Draw()
@@ -50,7 +46,6 @@ public class Line : GraphObject
     {
         this.start = start;
         this.end = end;
-        AddToScene();
     }
 
     public override void Draw()
@@ -76,7 +71,6 @@ public class Circle : GraphObject
     {
         this.center = center;
         this.radius = radius;
-        AddToScene();
     }
 
     public override void Draw()
@@ -96,32 +90,22 @@ public class Circle : GraphObject
 public class Scene
 {
     private List<GraphObject> objects = new List<GraphObject>();
-    private static Scene instance;
-    public event Action<GraphObject> ObjectAdded;
+    public string SceneType { get; }
 
-    private Scene() { }
-
-    public static Scene Instance
+    public Scene(string sceneType)
     {
-        get
-        {
-            if (instance == null)
-            {
-                instance = new Scene();
-            }
-            return instance;
-        }
+        SceneType = sceneType;
     }
 
     public void AddObject(GraphObject graphObject)
     {
         objects.Add(graphObject);
        
-        ObjectAdded?.Invoke(graphObject);
     }
 
     public void Draw()
     {
+        Console.WriteLine($"Рисуем {SceneType} сцену:");
         foreach (var obj in objects)
         {
             obj.Draw();
@@ -129,21 +113,57 @@ public class Scene
     }
 }
 
-public class GraphObjectFactory
+public abstract class GraphObjectFactory
 {
-    public static Point CreatePoint(double x, double y)
+    public abstract Point CreatePoint(double x, double y);
+    public abstract Line CreateLine(Point start, Point end);
+    public abstract Circle CreateCircle(Point center, double radius);
+    public abstract Scene CreateScene();
+}
+
+public class ColorSceneFactory : GraphObjectFactory
+{
+    public override Point CreatePoint(double x, double y)
     {
         return new Point(x, y);
     }
 
-    public static Line CreateLine(Point start, Point end)
+    public override Line CreateLine(Point start, Point end)
     {
         return new Line(start, end);
     }
 
-    public static Circle CreateCircle(Point center, double radius)
+    public override Circle CreateCircle(Point center, double radius)
     {
         return new Circle(center, radius);
+    }
+
+    public override Scene CreateScene()
+    {
+        return new Scene("Цветная");
+    }
+}
+
+public class BlackWhiteSceneFactory : GraphObjectFactory
+{
+    public override Point CreatePoint(double x, double y)
+    {
+        return new Point(x, y);
+    }
+
+    public override Line CreateLine(Point start, Point end)
+    {
+        return new Line(start, end);
+    }
+
+    public override Circle CreateCircle(Point center, double radius)
+    {
+        return new Circle(center, radius);
+    }
+
+    public override Scene CreateScene()
+    {
+        return new Scene("Черно-белая");
     }
 }
 
@@ -151,34 +171,30 @@ class Program
 {
     static void Main(string[] args)
     {
-       
-        Point point1 = GraphObjectFactory.CreatePoint(1, 1);
-        Point point2 = GraphObjectFactory.CreatePoint(4, 5);
-        Line line = GraphObjectFactory.CreateLine(point1, point2);
-        Circle circle = GraphObjectFactory.CreateCircle(point1, 3.5);
+        GraphObjectFactory colorFactory = new ColorSceneFactory();
+        GraphObjectFactory bwFactory = new BlackWhiteSceneFactory();
 
-        Console.WriteLine("Оригинальные объекты:");
-        point1.Draw();
-        line.Draw();
-        circle.Draw();
+        Scene colorScene = colorFactory.CreateScene();
+        Scene bwScene = bwFactory.CreateScene();
 
-        Point pointClone = (Point)point1.Clone();
-        Line lineClone = (Line)line.Clone();
-        Circle circleClone = (Circle)circle.Clone();
+        Point colorPoint = colorFactory.CreatePoint(2, 3);
+        Line colorLine = colorFactory.CreateLine(colorPoint, colorFactory.CreatePoint(5, 7));
+        Circle colorCircle = colorFactory.CreateCircle(colorPoint, 4);
 
-        Console.WriteLine("\nКлонированные объекты:");
-        pointClone.Draw();
-        lineClone.Draw();
-        circleClone.Draw();
+        colorPoint.AddToScene(colorScene);
+        colorLine.AddToScene(colorScene);
+        colorCircle.AddToScene(colorScene);
 
-        Scene scene = Scene.Instance;
-        scene.AddObject(point1);
-        scene.AddObject(line);
-        scene.AddObject(circle);
+        Point bwPoint = bwFactory.CreatePoint(1, 1);
+        Line bwLine = bwFactory.CreateLine(bwPoint, bwFactory.CreatePoint(3, 4));
+        Circle bwCircle = bwFactory.CreateCircle(bwPoint, 2);
 
-        Console.WriteLine();
-        Console.WriteLine("Рисуем все объекты на сцене:");
-        scene.Draw();
+        bwPoint.AddToScene(bwScene);
+        bwLine.AddToScene(bwScene);
+        bwCircle.AddToScene(bwScene);
+
+        colorScene.Draw();
+        bwScene.Draw();
 
         Console.ReadLine();
     }
