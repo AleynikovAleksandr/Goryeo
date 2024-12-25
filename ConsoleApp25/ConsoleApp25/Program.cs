@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 public abstract class GraphObject : ICloneable
 {
     public abstract void Draw();
     public abstract object Clone();
+
+    public void AddToScene()
+    {
+        Scene.Instance.AddObject(this);
+    }
 }
 
 public class Point : GraphObject
@@ -20,6 +24,7 @@ public class Point : GraphObject
     {
         this.x = x;
         this.y = y;
+        AddToScene();
     }
 
     public override void Draw()
@@ -45,6 +50,7 @@ public class Line : GraphObject
     {
         this.start = start;
         this.end = end;
+        AddToScene();
     }
 
     public override void Draw()
@@ -70,6 +76,7 @@ public class Circle : GraphObject
     {
         this.center = center;
         this.radius = radius;
+        AddToScene();
     }
 
     public override void Draw()
@@ -86,19 +93,14 @@ public class Circle : GraphObject
     public double Radius => radius;
 }
 
-
 public class Scene
 {
-   
     private List<GraphObject> objects = new List<GraphObject>();
-
-   
     private static Scene instance;
+    public event Action<GraphObject> ObjectAdded;
 
-  
     private Scene() { }
 
-    
     public static Scene Instance
     {
         get
@@ -111,13 +113,13 @@ public class Scene
         }
     }
 
-   
     public void AddObject(GraphObject graphObject)
     {
         objects.Add(graphObject);
+       
+        ObjectAdded?.Invoke(graphObject);
     }
 
-   
     public void Draw()
     {
         foreach (var obj in objects)
@@ -127,37 +129,49 @@ public class Scene
     }
 }
 
+public class GraphObjectFactory
+{
+    public static Point CreatePoint(double x, double y)
+    {
+        return new Point(x, y);
+    }
+
+    public static Line CreateLine(Point start, Point end)
+    {
+        return new Line(start, end);
+    }
+
+    public static Circle CreateCircle(Point center, double radius)
+    {
+        return new Circle(center, radius);
+    }
+}
 
 class Program
 {
     static void Main(string[] args)
     {
        
-        Point point1 = new Point(1, 1);
-        Point point2 = new Point(4, 5);
-        Line line = new Line(point1, point2);
-        Circle circle = new Circle(point1, 3.5);
+        Point point1 = GraphObjectFactory.CreatePoint(1, 1);
+        Point point2 = GraphObjectFactory.CreatePoint(4, 5);
+        Line line = GraphObjectFactory.CreateLine(point1, point2);
+        Circle circle = GraphObjectFactory.CreateCircle(point1, 3.5);
 
-       
         Console.WriteLine("Оригинальные объекты:");
         point1.Draw();
         line.Draw();
         circle.Draw();
 
-        
         Point pointClone = (Point)point1.Clone();
         Line lineClone = (Line)line.Clone();
         Circle circleClone = (Circle)circle.Clone();
 
-        
         Console.WriteLine("\nКлонированные объекты:");
         pointClone.Draw();
         lineClone.Draw();
         circleClone.Draw();
 
-        
         Scene scene = Scene.Instance;
-
         scene.AddObject(point1);
         scene.AddObject(line);
         scene.AddObject(circle);
