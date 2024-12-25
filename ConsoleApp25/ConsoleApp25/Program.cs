@@ -4,135 +4,168 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp25
-{
-  
-    public abstract class GraphObject : ICloneable
-    {
-        public abstract void Draw();
 
-        public abstract object Clone();
+public abstract class GraphObject : ICloneable
+{
+    public abstract void Draw();
+    public abstract object Clone();
+}
+
+public class Point : GraphObject
+{
+    private double x;
+    private double y;
+
+    public Point(double x, double y)
+    {
+        this.x = x;
+        this.y = y;
     }
 
-  
-    public class Point : GraphObject
+    public override void Draw()
     {
-        private double x;
-        private double y;
+        Console.WriteLine($"Рисуем точку в координатах ({x}, {y})");
+    }
 
-        public Point(double x, double y)
+    public override object Clone()
+    {
+        return new Point(this.x, this.y);
+    }
+
+    public double X => x;
+    public double Y => y;
+}
+
+public class Line : GraphObject
+{
+    private Point start;
+    private Point end;
+
+    public Line(Point start, Point end)
+    {
+        this.start = start;
+        this.end = end;
+    }
+
+    public override void Draw()
+    {
+        Console.WriteLine($"Рисуем линию от ({start.X}, {start.Y}) до ({end.X}, {end.Y})");
+    }
+
+    public override object Clone()
+    {
+        return new Line((Point)this.start.Clone(), (Point)this.end.Clone());
+    }
+
+    public Point Start => start;
+    public Point End => end;
+}
+
+public class Circle : GraphObject
+{
+    private Point center;
+    private double radius;
+
+    public Circle(Point center, double radius)
+    {
+        this.center = center;
+        this.radius = radius;
+    }
+
+    public override void Draw()
+    {
+        Console.WriteLine($"Рисуем круг с центром в ({center.X}, {center.Y}) и радиусом {radius}");
+    }
+
+    public override object Clone()
+    {
+        return new Circle((Point)this.center.Clone(), this.radius);
+    }
+
+    public Point Center => center;
+    public double Radius => radius;
+}
+
+
+public class Scene
+{
+   
+    private List<GraphObject> objects = new List<GraphObject>();
+
+   
+    private static Scene instance;
+
+  
+    private Scene() { }
+
+    
+    public static Scene Instance
+    {
+        get
         {
-            this.x = x;
-            this.y = y;
+            if (instance == null)
+            {
+                instance = new Scene();
+            }
+            return instance;
         }
-
-      
-        public override void Draw()
-        {
-            Console.WriteLine($"Рисуем точку в координатах ({x}, {y})");
-        }
-
-       
-        public override object Clone()
-        {
-            return new Point(this.x, this.y);
-        }
-
-       
-        public double X => x;
-        public double Y => y;
     }
 
    
-    public class Line : GraphObject
+    public void AddObject(GraphObject graphObject)
     {
-        private Point start;
-        private Point end;
-
-       
-        public Line(Point start, Point end)
-        {
-            this.start = start;
-            this.end = end;
-        }
-
-       
-        public override void Draw()
-        {
-            Console.WriteLine($"Рисуем линию от ({start.X}, {start.Y}) до ({end.X}, {end.Y})");
-        }
-
-       
-        public override object Clone()
-        {
-           
-            return new Line((Point)this.start.Clone(), (Point)this.end.Clone());
-        }
-
-        
-        public Point Start => start;
-        public Point End => end;
+        objects.Add(graphObject);
     }
 
-    
-    public class Circle : GraphObject
+   
+    public void Draw()
     {
-        private Point center;
-        private double radius;
-
-        
-        public Circle(Point center, double radius)
+        foreach (var obj in objects)
         {
-            this.center = center;
-            this.radius = radius;
+            obj.Draw();
         }
-
-       
-        public override void Draw()
-        {
-            Console.WriteLine($"Рисуем круг с центром в ({center.X}, {center.Y}) и радиусом {radius}");
-        }
-
-       
-        public override object Clone()
-        {
-           
-            return new Circle((Point)this.center.Clone(), this.radius);
-        }
-
-        
-        public Point Center => center;
-        public double Radius => radius;
     }
+}
 
-    
-    class Program
+
+class Program
+{
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-           
-            Point point1 = new Point(1, 1);
-            Point point2 = new Point(4, 5);
+       
+        Point point1 = new Point(1, 1);
+        Point point2 = new Point(4, 5);
+        Line line = new Line(point1, point2);
+        Circle circle = new Circle(point1, 3.5);
 
-            Line line = new Line(point1, point2);
-            Circle circle = new Circle(point1, 3.5);
+       
+        Console.WriteLine("Оригинальные объекты:");
+        point1.Draw();
+        line.Draw();
+        circle.Draw();
 
-            
-            Console.WriteLine("Оригинальные объекты:");
-            point1.Draw();
-            line.Draw();
-            circle.Draw();
+        
+        Point pointClone = (Point)point1.Clone();
+        Line lineClone = (Line)line.Clone();
+        Circle circleClone = (Circle)circle.Clone();
 
-            
-            Point pointClone = (Point)point1.Clone();
-            Line lineClone = (Line)line.Clone();
-            Circle circleClone = (Circle)circle.Clone();
+        
+        Console.WriteLine("\nКлонированные объекты:");
+        pointClone.Draw();
+        lineClone.Draw();
+        circleClone.Draw();
 
-            Console.WriteLine("\nКлонированные объекты:");
-            pointClone.Draw();
-            lineClone.Draw();
-            circleClone.Draw();
-            Console.ReadLine();
-        }
+        
+        Scene scene = Scene.Instance;
+
+        scene.AddObject(point1);
+        scene.AddObject(line);
+        scene.AddObject(circle);
+
+        Console.WriteLine();
+        Console.WriteLine("Рисуем все объекты на сцене:");
+        scene.Draw();
+
+        Console.ReadLine();
     }
 }

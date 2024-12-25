@@ -5,3 +5,10 @@ C:\Users\Alex\source\repos\ConsoleApp25\ConsoleApp25\obj\Debug\ConsoleApp25.cspr
 C:\Users\Alex\source\repos\ConsoleApp25\ConsoleApp25\obj\Debug\ConsoleApp25.csproj.CoreCompileInputs.cache
 C:\Users\Alex\source\repos\ConsoleApp25\ConsoleApp25\obj\Debug\ConsoleApp25.exe
 C:\Users\Alex\source\repos\ConsoleApp25\ConsoleApp25\obj\Debug\ConsoleApp25.pdb
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp25\ConsoleApp25\obj\Debug\ConsoleApp25.csproj.AssemblyReference.cache
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp25\ConsoleApp25\obj\Debug\ConsoleApp25.csproj.CoreCompileInputs.cache
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp25\ConsoleApp25\obj\Debug\ConsoleApp25.exe
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp25\ConsoleApp25\obj\Debug\ConsoleApp25.pdb
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp25\ConsoleApp25\bin\Debug\ConsoleApp25.exe.config
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp25\ConsoleApp25\bin\Debug\ConsoleApp25.exe
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp25\ConsoleApp25\bin\Debug\ConsoleApp25.pdb
