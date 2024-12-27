@@ -1,0 +1,7 @@
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp28\ConsoleApp28\bin\Debug\ConsoleApp28.exe.config
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp28\ConsoleApp28\bin\Debug\ConsoleApp28.exe
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp28\ConsoleApp28\bin\Debug\ConsoleApp28.pdb
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp28\ConsoleApp28\obj\Debug\ConsoleApp28.csproj.AssemblyReference.cache
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp28\ConsoleApp28\obj\Debug\ConsoleApp28.csproj.CoreCompileInputs.cache
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp28\ConsoleApp28\obj\Debug\ConsoleApp28.exe
+C:\Users\Alex\source\repos\Goryeo\ConsoleApp28\ConsoleApp28\obj\Debug\ConsoleApp28.pdb
